@@ -15,17 +15,29 @@ function next_dev_tag() {
     read_tags
     if [ -z $LAST_DEV_TAG ] ; then
       VERSION=$DEFAULT_TAG
-    # else if # TODO: detect RC for last dev and bump minor
     else
       VERSION_ARRAY=(`echo $LAST_DEV_TAG | tr '.' ' '`)
       # if number of elements is 3 this is old version pattern without patch - 0.1-dev.1
       # if it's four then version is in new format with patch 0.1.0-dev.1
-      echo "Number of elements in version array: ${#VERSION_ARRAY[@]}"
-      LAST_DEV_NUM=${VERSION_ARRAY[@]: -1:1}
-      echo "Last dev dev number: $LAST_DEV_NUM"
-      NEXT_DEV_NUM=$((${LAST_DEV_NUM}+1))
-      echo "Next dev number: ${NEXT_DEV_NUM}"
-      VERSION=$(echo $LAST_DEV_TAG | sed s/-dev.$LAST_DEV_NUM/-dev.$NEXT_DEV_NUM/)
+      MAJOR="${VERSION_ARRAY[0]}"
+      MINOR=$(echo ${VERSION_ARRAY[1]} | sed s/-dev//)
+      #TODO: detect RC for last dev and bump minor
+      # if echo $TAGS | grep -E "${VERSION_ARRAY[0]}\.${VERSION_ARRAY[1]}"..
+      #   NEXT_MINOR=$((${MINOR}+1))
+      #   VERSION=...
+      # ...
+      # TODO: else increment dev number
+      # else
+      #   VERSION_ARRAY=(`echo $LAST_DEV_TAG | tr '.' ' '`)
+      #   # if number of elements is 3 this is old version pattern without patch - 0.1-dev.1
+      #   # if it's four then version is in new format with patch 0.1.0-dev.1
+      #   echo "Number of elements in version array: ${#VERSION_ARRAY[@]}"
+      #   LAST_DEV_NUM=${VERSION_ARRAY[@]: -1:1}
+      #   echo "Last dev dev number: $LAST_DEV_NUM"
+      #   NEXT_DEV_NUM=$((${LAST_DEV_NUM}+1))
+      #   echo "Next dev number: ${NEXT_DEV_NUM}"
+      #   VERSION=$(echo $LAST_DEV_TAG | sed s/-dev.$LAST_DEV_NUM/-dev.$NEXT_DEV_NUM/)
+      # fi
     fi
 
     echo "Version: $VERSION"
@@ -70,7 +82,7 @@ next_dev_tag
 assertEq $VERSION "0.1-dev.12"
 
 echo "----"
-echo "Should return next dev tag if no RC tag is present"
+echo "Should bump minor if RC tag is present"
 read -r -d '' TAGS <<- EOM
     0.1-dev.1
     0.1-dev.10
