@@ -1,16 +1,19 @@
 import subprocess
 
+
 def writeVersionToFile(tag):
     with open("version.env", "w") as file:
-      file.write("VERSION="+tag)
+        file.write("VERSION="+tag)
+
 
 allTags = subprocess.run(["git", "tag", "--list", "--merged",
                           "HEAD"], capture_output=True).stdout.decode('ascii').split("\n")
 
-devTags = list(filter(lambda tag: "dev" in tag , allTags))
-rcTags = list(filter(lambda tag: "RC" in tag , allTags))
+devTags = list(filter(lambda tag: "dev" in tag, allTags))
+rcTags = list(filter(lambda tag: "RC" in tag, allTags))
 
-devTags.sort(key=lambda tag: tag.split("."))
+devTags.sort(key=lambda tag:  list(
+    map(int, tag.replace("-dev", "").split(".")))) # TODO: sort key finction returns tuple which could be used to get major minor patch
 
 try:
     lastDevTag = devTags[-1]
@@ -36,11 +39,12 @@ suffixVersion = int(versionSuffix.split(".")[-1])
 
 # calculate next version
 try:
-  # if RC tag for last dev tag is present return next minor version 
-  matchingRcTag = list(filter(lambda tag: f'{major}.{minor}.{patch}-RC' in tag , rcTags))[0]
-  newVersion = f'{major}.{minor+1}.0-dev.1'
-  writeVersionToFile(newVersion)
-  exit()
+    # if RC tag for last dev tag is present return next minor version
+    matchingRcTag = list(
+        filter(lambda tag: f'{major}.{minor}.{patch}-RC' in tag, rcTags))[0]
+    newVersion = f'{major}.{minor+1}.0-dev.1'
+    writeVersionToFile(newVersion)
+    exit()
 except IndexError:
     # if RC tag is not present return next dev version
     newVersion = f'{major}.{minor}.{patch}-dev.{suffixVersion+1}'
