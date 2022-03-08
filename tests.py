@@ -30,6 +30,14 @@ def generateNextRcTag():
         subprocess.run(["sh", "-c", "git tag "+tag])
         return tag
 
+def generateNextProdTag():
+    subprocess.run(["python", "prod-version.py"])
+    with open("version.env", "r") as file:
+        tag = file.readline().split("=")[-1]
+        print(f"tag with new tag {tag}")
+        subprocess.run(["sh", "-c", "git tag "+tag])
+        return tag
+
 
 def generateTag(tag):
     print(f"tag with new tag {tag}")
@@ -103,3 +111,13 @@ print("generate 0.3.0 RC tag")
 tag = generateNextRcTag()
 listTags()
 assert(tag == "0.3.0-RC.1")
+
+print("generate 0.3.0 prod tag")
+tag = generateNextProdTag()
+listTags()
+assert(tag == "0.3.0")
+
+print("generate 0.4.0-dev.1 tag")
+tag = generateNextDevTag()
+listTags()
+assert(tag == "0.4.0-dev.1")
