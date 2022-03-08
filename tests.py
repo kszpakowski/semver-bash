@@ -22,6 +22,15 @@ def generateNextDevTag():
         return devTag
 
 
+def generateNextRcTag():
+    subprocess.run(["python", "rc-version.py"])
+    with open("version.env", "r") as file:
+        tag = file.readline().split("=")[-1]
+        print(f"tag with new tag {tag}")
+        subprocess.run(["sh", "-c", "git tag "+tag])
+        return tag
+
+
 def generateTag(tag):
     print(f"tag with new tag {tag}")
     subprocess.run(["sh", "-c", "git tag "+tag])
@@ -46,7 +55,7 @@ listTags()
 assert(tag == "0.1.0-dev.3")
 
 print("generate RC tag")
-tag = generateTag("0.1.0-RC.1")
+tag = generateNextRcTag()
 listTags()
 assert(tag == "0.1.0-RC.1")
 
@@ -74,3 +83,23 @@ generateNextDevTag()
 tag = generateNextDevTag()
 listTags()
 assert(tag == "0.2.0-dev.12")
+
+print("generate second RC tag")
+tag = generateNextRcTag()
+listTags()
+assert(tag == "0.2.0-RC.1")
+
+print("generate next RC tag")
+tag = generateNextRcTag()
+listTags()
+assert(tag == "0.2.0-RC.2")
+
+print("generate dev tag after second RC")
+tag = generateNextDevTag()
+listTags()
+assert(tag == "0.3.0-dev.1")
+
+print("generate 0.3.0 RC tag")
+tag = generateNextRcTag()
+listTags()
+assert(tag == "0.3.0-RC.1")
