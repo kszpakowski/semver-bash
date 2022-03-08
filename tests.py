@@ -9,12 +9,11 @@ def cleanupTags():
 def listTags():
     tags = subprocess.run(["sh", "-c", "git tag --list"],
                           capture_output=True).stdout.decode('ascii')
-    print("tags:" ,tags)
+    print("tags:", tags)
     return tags
 
 
 def generateNextDevTag():
-    print("generateDevTag")
     subprocess.run(["python", "dev-version.py"])
     with open("version.env", "r") as file:
         devTag = file.readline().split("=")[-1]
@@ -63,16 +62,15 @@ assert(tag == "0.2.0-dev.2")
 
 
 print("generate second dev tag after RC")
+generateNextDevTag()
+generateNextDevTag()
+generateNextDevTag()
+generateNextDevTag()
+generateNextDevTag()
+generateNextDevTag()
+generateNextDevTag()
+generateNextDevTag()
+generateNextDevTag()
 tag = generateNextDevTag()
-tag = generateNextDevTag()
-tag = generateNextDevTag()
-tag = generateNextDevTag()
-tag = generateNextDevTag()
-tag = generateNextDevTag()
-tag = generateNextDevTag()
-tag = generateNextDevTag()
-tag = generateNextDevTag()
-tag = generateNextDevTag()
-print("tag:", tag )
 listTags()
 assert(tag == "0.2.0-dev.12")
