@@ -28,7 +28,6 @@ try:
             filter(lambda tag: f'{major}.{minor}.{patch}-RC' in tag, rcTags))[0]
         newVersion = f'{major}.{minor+1}.0-dev.1'
         writeVersionToFile(newVersion)
-        exit()
     except IndexError:
         # RC tag is not present return next dev version
         newVersion = f'{major}.{minor}.{patch}-dev.{suffix+1}'
@@ -37,4 +36,3 @@ try:
 except IndexError:
     # Dev tag not found - return default tag and exit.
     writeVersionToFile("0.1.0-dev.1")
-    exit()
